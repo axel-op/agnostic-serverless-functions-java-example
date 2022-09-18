@@ -23,14 +23,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Set Maven settings.xml
+        env:
+          SETTINGS_XML: ${{ secrets.SETTINGS_XML }}
+        run: mkdir -p "$HOME/.m2" && echo "$SETTINGS_XML" > "$HOME/.m2/settings.xml"
       - name: Package
-        run: |
-          SETTINGS=${GITHUB_WORKSPACE}/settings.xml
-          echo '${{ secrets.SETTINGS_XML }}' > $SETTINGS
-          mvn --settings=${SETTINGS} --batch-mode \
-            -DappName=${APP_NAME} \
-            package \
-            com.microsoft.azure:azure-functions-maven-plugin:package
+        uses: axel-op/agnostic-serverless-functions-java-package-action@main
+        with:
+          function-name: ${{ env.APP_NAME }}
+          faas-provider: ${{ env.AGNOSTIC_FUNCTION_ADAPTER }}
       - name: Deploy
         uses: Azure/functions-action@v1
         with:
@@ -41,9 +42,9 @@ jobs:
       - name: Test
         run: |
           STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.AZURE_FUNCTION_URL }}/api/handler)
-          if [[ "${STATUS_CODE}" != 2* ]]
+          if [[ "$STATUS_CODE" != 2* ]]
           then
-            echo "Invalid status code: ${STATUS_CODE}"
+            echo "Invalid status code: $STATUS_CODE"
             exit 1
           fi
 
@@ -51,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      APP_NAME: ${{ secrets.GCLOUD_FUNCTION_NAME }}
       AGNOSTIC_FUNCTION_ADAPTER: gcloud
       DEPLOYMENT_DIR: deployment
 
@@ -60,16 +62,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Set Maven settings.xml
+        env:
+          SETTINGS_XML: ${{ secrets.SETTINGS_XML }}
+        run: mkdir -p "$HOME/.m2" && echo "$SETTINGS_XML" > "$HOME/.m2/settings.xml"
       - name: Package
-        run: |
-          SETTINGS=${GITHUB_WORKSPACE}/settings.xml
-          echo '${{ secrets.SETTINGS_XML }}' > $SETTINGS
-          mvn --settings=${SETTINGS} --batch-mode \
-            package \
-            shade:shade
-          JAR_FILE=$(ls target | grep '.jar$' | grep -v '^original')
-          mkdir -p target/${DEPLOYMENT_DIR}
-          cp target/${JAR_FILE} target/${DEPLOYMENT_DIR}/${JAR_FILE}
+        uses: axel-op/agnostic-serverless-functions-java-package-action@main
+        with:
+          function-name: ${{ env.APP_NAME }}
+          faas-provider: ${{ env.AGNOSTIC_FUNCTION_ADAPTER }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_SERVICE_ACCOUNT }}
@@ -77,7 +78,7 @@ jobs:
         id: deploy
         uses: google-github-actions/deploy-cloud-functions@v0
         with:
-          name: ${{ secrets.GCLOUD_FUNCTION_NAME }}
+          name: ${{ env.APP_NAME }}
           region: ${{ secrets.GCLOUD_FUNCTION_REGION }}
           source_dir: target/${{ env.DEPLOYMENT_DIR }}
           entry_point: fr.axelop.agnosticserverlessfunctions.FunctionInvoker
@@ -85,8 +86,8 @@ jobs:
       - name: Test
         run: |
           STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ steps.deploy.outputs.url }})
-          if [[ "${STATUS_CODE}" != 2* ]]
+          if [[ "$STATUS_CODE" != 2* ]]
           then
-            echo "Invalid status code: ${STATUS_CODE}"
+            echo "Invalid status code: $STATUS_CODE"
             exit 1
           fi
