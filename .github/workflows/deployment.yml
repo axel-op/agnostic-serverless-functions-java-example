@@ -23,15 +23,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Set Maven settings.xml
-        env:
-          SETTINGS_XML: ${{ secrets.SETTINGS_XML }}
-        run: mkdir -p "$HOME/.m2" && echo "$SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          server-id: github-packages
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Package
         uses: axel-op/agnostic-serverless-functions-java-package-action@main
         with:
           function-name: ${{ env.APP_NAME }}
           faas-provider: ${{ env.AGNOSTIC_FUNCTION_ADAPTER }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
       - name: Deploy
         uses: Azure/functions-action@v1
         with:
@@ -62,15 +64,17 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Set Maven settings.xml
-        env:
-          SETTINGS_XML: ${{ secrets.SETTINGS_XML }}
-        run: mkdir -p "$HOME/.m2" && echo "$SETTINGS_XML" > "$HOME/.m2/settings.xml"
+          server-id: github-packages
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Package
         uses: axel-op/agnostic-serverless-functions-java-package-action@main
         with:
           function-name: ${{ env.APP_NAME }}
           faas-provider: ${{ env.AGNOSTIC_FUNCTION_ADAPTER }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCLOUD_SERVICE_ACCOUNT }}
