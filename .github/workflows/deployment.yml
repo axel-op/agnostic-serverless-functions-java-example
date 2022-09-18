@@ -23,7 +23,6 @@ jobs:
             APP_NAME_SECRET: AZURE_FUNCTION_NAME
           - PROVIDER: gcloud
             APP_NAME_SECRET: GCLOUD_FUNCTION_NAME
-            DEPLOYMENT_DIR: deployment
 
     env:
       APP_NAME: ${{ secrets[matrix.APP_NAME_SECRET] }}
@@ -39,6 +38,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Package
+        id: package
         uses: axel-op/agnostic-serverless-functions-java-package-action@main
         with:
           function-name: ${{ env.APP_NAME }}
@@ -51,7 +51,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ env.APP_NAME }}
-          package: "./target/azure-functions/${{ env.APP_NAME }}"
+          package: ${{ steps.package.outputs.deployment-directory }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: true
       - name: Authenticate on Google Cloud
@@ -66,7 +66,7 @@ jobs:
         with:
           name: ${{ env.APP_NAME }}
           region: ${{ secrets.GCLOUD_FUNCTION_REGION }}
-          source_dir: target/${{ matrix.DEPLOYMENT_DIR }}
+          source_dir: ${{ steps.package.outputs.deployment-directory }}
           entry_point: fr.axelop.agnosticserverlessfunctions.FunctionInvoker
           runtime: java11
       - name: Test
