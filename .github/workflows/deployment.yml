@@ -18,7 +18,7 @@ jobs:
       AGNOSTIC_FUNCTION_ADAPTER: azure
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -57,7 +57,7 @@ jobs:
       DEPLOYMENT_DIR: deployment
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
