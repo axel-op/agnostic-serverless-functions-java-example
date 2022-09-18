@@ -15,7 +15,7 @@ jobs:
 
     env:
       APP_NAME: ${{ secrets.AZURE_FUNCTION_NAME }}
-      ADAPTER: azure
+      AGNOSTIC_FUNCTION_ADAPTER: azure
 
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +28,6 @@ jobs:
           SETTINGS=${GITHUB_WORKSPACE}/settings.xml
           echo '${{ secrets.SETTINGS_XML }}' > $SETTINGS
           mvn --settings=${SETTINGS} --batch-mode \
-            -Dagnosticserverlessfunctions.adapter=${ADAPTER} \
             -DappName=${APP_NAME} \
             package \
             com.microsoft.azure:azure-functions-maven-plugin:package
@@ -52,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ADAPTER: azure
+      AGNOSTIC_FUNCTION_ADAPTER: gcloud
       DEPLOYMENT_DIR: deployment
 
     steps:
@@ -66,7 +65,6 @@ jobs:
           SETTINGS=${GITHUB_WORKSPACE}/settings.xml
           echo '${{ secrets.SETTINGS_XML }}' > $SETTINGS
           mvn --settings=${SETTINGS} --batch-mode \
-            -Dagnosticserverlessfunctions.adapter=gcloud \
             package \
             shade:shade
           JAR_FILE=$(ls target | grep '.jar$' | grep -v '^original')

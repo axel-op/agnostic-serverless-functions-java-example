@@ -14,7 +14,7 @@
         <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
         <agnosticserverlessfunctions.interfaces.version>0.0.1-SNAPSHOT</agnosticserverlessfunctions.interfaces.version>
         <agnosticserverlessfunctions.adapter.version>0.0.1-SNAPSHOT</agnosticserverlessfunctions.adapter.version>
-        <agnosticserverlessfunctions.adapter>gcloud</agnosticserverlessfunctions.adapter>
+        <agnosticserverlessfunctions.adapter>${env.AGNOSTIC_FUNCTION_ADAPTER}</agnosticserverlessfunctions.adapter>
     </properties>
 
     <repositories>
