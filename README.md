@@ -4,4 +4,4 @@ This is an example of an [Agnostic Serverless Function in Java](https://github.c
 
 Neither [the code of this function](./src/main/java/fr/axelop/agnosticserverlessfunctions/example/), nor [its configuration](./pom.xml), contain instructions specific to any FaaS provider.
 
-This function can be deployed to Azure Functions or Google Cloud Functions without editing the code or the configuration (other providers will be supported in the future). Look at the [deployment workflow](./.github/workflows/deployment.yml) for a complete example of a deployment.
+This function can be deployed to AWS Lambda, Azure Functions or Google Cloud Functions without editing the code or the configuration (other providers will be added in the future). Look at the [deployment workflow](./.github/workflows/deployment.yml) for a complete example of a deployment.
