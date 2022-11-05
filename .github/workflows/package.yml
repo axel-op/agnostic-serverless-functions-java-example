@@ -1,0 +1,53 @@
+name: Package
+
+on:
+  workflow_call:
+    inputs:
+      function-name:
+        required: true
+        type: string
+      provider:
+        required: true
+        type: string
+      maven-server-id:
+        required: false
+        type: string
+        default: "github-packages"
+    secrets:
+      maven-username:
+        required: false
+      maven-password:
+        required: false
+    outputs:
+      deployment-directory-artifact:
+        value: ${{ jobs.package-action.outputs.deployment-directory-artifact }}
+
+jobs:
+  package-action:
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-directory-artifact: deployment-directory-${{ inputs.provider }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          server-id: ${{ inputs.maven-server-id }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Package
+        id: package
+        uses: axel-op/agnostic-serverless-functions-java-package-action@main
+        with:
+          function-name: ${{ inputs.function-name }}
+          faas-provider: ${{ inputs.provider }}
+        env:
+          MAVEN_USERNAME: ${{ secrets.maven-username || github.actor }}
+          MAVEN_PASSWORD: ${{ secrets.maven-password || github.token }}
+          AGNOSTIC_FUNCTION_ADAPTER: ${{ inputs.provider }}
+      - name: Upload deployment directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-directory-${{ inputs.provider }}
+          path: ${{ steps.package.outputs.deployment-directory }}
