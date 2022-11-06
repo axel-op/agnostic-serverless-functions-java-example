@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      url:
+        required: true
+        type: string
+        description: "The URL of the function"
+
+jobs:
+  call-function:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test deployed function
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [[ "$STATUS_CODE" != 2* ]]; then
+            echo "Invalid status code: $STATUS_CODE"
+            exit 1
+          fi
