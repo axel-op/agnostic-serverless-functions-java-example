@@ -4,7 +4,7 @@
     <packaging>jar</packaging>
     <name>Agnostic Serverless Functions Template</name>
     <groupId>fr.axelop.agnosticserverlessfunctions</groupId>
-    <artifactId>agnostic-serverless-functions-example</artifactId>
+    <artifactId>example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
@@ -14,7 +14,7 @@
         <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
         <agnosticserverlessfunctions.interfaces.version>0.0.1-SNAPSHOT</agnosticserverlessfunctions.interfaces.version>
         <agnosticserverlessfunctions.adapter.version>0.0.1-SNAPSHOT</agnosticserverlessfunctions.adapter.version>
-        <agnosticserverlessfunctions.adapter>${env.AGNOSTIC_FUNCTION_ADAPTER}</agnosticserverlessfunctions.adapter>
+        <agnosticserverlessfunctions.adapter>${AGNOSTIC_FUNCTION_ADAPTER}</agnosticserverlessfunctions.adapter>
     </properties>
 
     <repositories>
@@ -28,13 +28,13 @@
     <dependencies>
         <dependency>
             <groupId>fr.axelop.agnosticserverlessfunctions</groupId>
-            <artifactId>agnostic-serverless-functions-interfaces</artifactId>
+            <artifactId>interfaces</artifactId>
             <version>${agnosticserverlessfunctions.interfaces.version}</version>
         </dependency>
 
         <dependency>
             <groupId>fr.axelop.agnosticserverlessfunctions</groupId>
-            <artifactId>agnostic-serverless-functions-${agnosticserverlessfunctions.adapter}-adapter</artifactId>
+            <artifactId>${agnosticserverlessfunctions.adapter}-adapter</artifactId>
             <version>${agnosticserverlessfunctions.adapter.version}</version>
             <scope>runtime</scope>
         </dependency>
