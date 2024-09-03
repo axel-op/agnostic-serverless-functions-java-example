@@ -58,7 +58,7 @@ jobs:
     steps:
       - name: Download deployment directory
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: deployment-directory-azure
       - name: Deploy on Azure
@@ -77,7 +77,7 @@ jobs:
     steps:
       - name: Download deployment directory
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: deployment-directory-gcloud
       - name: Authenticate on Google Cloud
@@ -106,7 +106,7 @@ jobs:
     steps:
       - name: Download deployment directory
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: deployment-directory-aws
       - name: Configure AWS Credentials
